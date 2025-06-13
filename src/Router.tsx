@@ -4,6 +4,7 @@ import StartPage from './pages/StartPage';
 import LoginPage from './pages/LoginPage';
 import HomePage from './pages/HomePage';
 import PageTransition from './components/PageTransition';
+import MyPage from './pages/MyPage';
 
 const Router: React.FC = () => {
   return (
@@ -20,6 +21,11 @@ const Router: React.FC = () => {
       } />
       <Route path="/home" element={<HomePage />} />
       <Route path="*" element={<Navigate to="/" replace />} />
+      <Route path="/mypage" element={
+          <PageTransition>
+              <MyPage />
+          </PageTransition>
+      } />
     </Routes>
   );
 };
