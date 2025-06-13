@@ -12,8 +12,8 @@ interface MiniCardProps {
 const CardWrapper = styled.div`
   background-color: #FFF6D1;
   border-radius: 16px;
-  width: 200px;
-  height: 200px;
+  width: 180px;
+  height: 180px;
   padding: 12px;
   display: flex;
   flex-direction: column;
