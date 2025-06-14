@@ -28,8 +28,8 @@ const CardWrapper = styled.div`
 `;
 
 const Icon = styled.img`
-  width: 36px;
-  height: 36px;
+  width: 60px;
+  height: 60px;
   margin-bottom: 10px;
 `;
 

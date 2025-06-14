@@ -55,6 +55,8 @@ const ButtonWrapper = styled(motion.div)`
 
 const StartPage: React.FC = () => {
   const navigate = useNavigate();
+
+  localStorage.clear();
   
   const handleStart = () => {
     navigate('/login');
