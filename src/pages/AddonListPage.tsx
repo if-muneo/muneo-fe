@@ -21,22 +21,28 @@ const Title = styled.h1`
     font-weight: 700;
     color: #111111;
     margin-bottom: 24px;
+    max-width: 960px;
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
 `;
 
 const AddonsWrapper = styled.div`
     display: flex;
     flex-direction: column;
+    align-items: center;
     gap: 16px;
 `;
 
 const OverviewCard = styled.div`
     display: flex;
-    height: 100px;
-    align-items: center;
+    align-items: flex-start;
     background-color: #F5F5F5;
     border-radius: 12px;
     padding: 14px 24px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    width: 100%;
+    max-width: 960px;
 `;
 
 const SectionBox = styled.div<{ flexRatio?: number }>`
