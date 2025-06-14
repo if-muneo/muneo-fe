@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import Header from '../components/Header';
+import api from '../util/axios';
+import type {DefaultAddon, DefaultAddonsResponse} from "../types/AddonList.ts";
 
 const PageContainer = styled(motion.div)`
     width: 100%;
@@ -85,27 +87,28 @@ const PageButton = styled.button<{ active?: boolean }>`
     }
 `;
 
-const Ellipsis = styled.span`
-    font-size: 16px;
-    color: #666666;
-`;
-
-const overviewData = [
-    {
-        name: 'V컬러링 바이브 플러스'
-    },
-    {
-        name: '유튜브 프리미엄'
-    },
-    {
-        name: '지니 뮤직'
-    },
-    {
-        name: '디즈니+ 팩',
-    },
-];
-
 const AddonListPage: React.FC = () => {
+    const [currentPage, setCurrentPage] = useState(0);
+    const [totalPages, setTotalPages] = useState(0);
+    const [addons, setAddons] = useState<DefaultAddon[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        setLoading(true);
+        api.get<{ defaultAddonsResponse: DefaultAddonsResponse }>(`/v1/addons?page=${currentPage}`)
+            .then(res => {
+                const response = res.data.defaultAddonsResponse;
+                setAddons(response.const);
+                setTotalPages(response.totalPages);
+            })
+            .catch(err => {
+                console.error('부가서비스 로딩 실패:', err);
+            })
+            .finally(() => {
+                setLoading(false);
+            });
+    }, []);
+
     return (
         <PageContainer
             initial={{ opacity: 0 }}
@@ -121,32 +124,52 @@ const AddonListPage: React.FC = () => {
             >
                 <Title>U+ 부가서비스 전체보기</Title>
 
-                <AddonsWrapper>
-                    {overviewData.map((addon, idx) => (
-                        <OverviewCard
-                            key={idx}
-                            as={motion.div}
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.3 + idx * 0.1, duration: 0.4 }}
-                        >
-                            <SectionBox flexRatio={2}>
-                                <div>
-                                    <AddonName>{addon.name}</AddonName>
-                                </div>
-                            </SectionBox>
-                        </OverviewCard>
-                    ))}
-                </AddonsWrapper>
+                {loading ? (
+                    <div>불러오는 중...</div>
+                ) : (
+                    <AddonsWrapper>
+                        {addons.map((addon, idx) => (
+                            <OverviewCard
+                                key={addon.id}
+                                as={motion.div}
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 0.3 + idx * 0.05, duration: 0.3 }}
+                            >
+                                <SectionBox flexRatio={2}>
+                                    <div>
+                                        <AddonName>{addon.name}</AddonName>
+                                    </div>
+                                </SectionBox>
+                            </OverviewCard>
+                        ))}
+                    </AddonsWrapper>
+                )}
 
                 <PaginationWrapper>
-                    <PageButton>{'<'}</PageButton>
-                    <PageButton active>1</PageButton>
-                    <PageButton>2</PageButton>
-                    <PageButton>3</PageButton>
-                    <Ellipsis>…</Ellipsis>
-                    <PageButton>99</PageButton>
-                    <PageButton>{'>'}</PageButton>
+                    <PageButton
+                        disabled={currentPage === 0}
+                        onClick={() => setCurrentPage(prev => prev - 1)}
+                    >
+                        {'<'}
+                    </PageButton>
+
+                    {Array.from({ length: totalPages }, (_, idx) => (
+                        <PageButton
+                            key={idx}
+                            active={currentPage === idx}
+                            onClick={() => setCurrentPage(idx)}
+                        >
+                            {idx + 1}
+                        </PageButton>
+                    ))}
+
+                    <PageButton
+                        disabled={currentPage === totalPages - 1}
+                        onClick={() => setCurrentPage(prev => prev + 1)}
+                    >
+                        {'>'}
+                    </PageButton>
                 </PaginationWrapper>
             </ContentContainer>
         </PageContainer>
