@@ -21,16 +21,16 @@ const Title = styled.h1`
     font-weight: 700;
     color: #111111;
     margin-bottom: 24px;
-    max-width: 960px;     // ✅ 카드와 너비 일치
+    max-width: 960px;
     width: 100%;
-    margin-left: auto;    // ✅ 가운데 정렬
+    margin-left: auto;
     margin-right: auto;
 `;
 
 const PlansWrapper = styled.div`
     display: flex;
     flex-direction: column;
-    align-items: center;   // ✅ 자식 요소들 가운데 정렬
+    align-items: center;
     gap: 16px;
 `;
 
@@ -42,7 +42,7 @@ const OverviewCard = styled.div`
     padding: 14px 24px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
     width: 100%;
-    max-width: 960px;   // ✅ 카드 최대 너비 제한
+    max-width: 960px;
 `;
 
 const SectionBox = styled.div<{ flexRatio?: number }>`
@@ -53,10 +53,10 @@ const SectionBox = styled.div<{ flexRatio?: number }>`
 
 
 const Divider = styled.div`
-    width: 1px;                  // 세로선이기 때문에 너비는 1px
-    height: 50px;                // 원하는 높이 설정
-    background-color: #D1D1D1;   // 연한 회색 (이미지처럼)
-    margin: 0 24px;              // 좌우 간격
+    width: 1px;                 
+    height: 50px;               
+    background-color: #D1D1D1;  
+    margin: 0 24px;             
 `;
 
 const PlanName = styled.span`
