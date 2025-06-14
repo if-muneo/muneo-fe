@@ -5,6 +5,7 @@ import LoginPage from './pages/LoginPage';
 import HomePage from './pages/HomePage';
 import PageTransition from './components/PageTransition';
 import MplanListPage from "./pages/MplanListPage.tsx";
+import AddonListPage from "./pages/AddonListPage.tsx";
 
 const Router: React.FC = () => {
   return (
@@ -25,6 +26,11 @@ const Router: React.FC = () => {
         <PageTransition>
             <MplanListPage />
         </PageTransition>
+      } />
+      <Route path="/addons" element={
+          <PageTransition>
+              <AddonListPage />
+          </PageTransition>
       } />
     </Routes>
 
