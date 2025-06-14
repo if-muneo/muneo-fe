@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useEffect, useState }from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import Header from '../components/Header';
+import api from '../util/axios';
+import type {Addon, Mplan, MplanPageResponse} from "../types/MplanList.ts";
 
 const PageContainer = styled(motion.div)`
     width: 100%;
@@ -114,59 +116,28 @@ const PageButton = styled.button<{ active?: boolean }>`
     }
 `;
 
-const Ellipsis = styled.span`
-    font-size: 16px;
-    color: #666666;
-`;
-
-const overviewData = [
-    {
-        name: '5G 프리미어 에센셜',
-        detail: {
-            monthlyPrice: '10,000원',
-            tethering: '10GB',
-            sharing: '10GB',
-        },
-        addon: {
-            name: ['넷플릭스', '지니뮤직']
-        }
-    },
-    {
-        name: '5G 스탠다드',
-        detail: {
-            monthlyPrice: '10,000원',
-            tethering: '10GB',
-            sharing: '10GB',
-        },
-        addon: {
-            name: ['넷플릭스', '지니뮤직']
-        }
-    },
-    {
-        name: '5G 심플',
-        detail: {
-            monthlyPrice: '10,000원',
-            tethering: '10GB',
-            sharing: '10GB',
-        },
-        addon: {
-            name: ['넷플릭스', '지니뮤직']
-        }
-    },
-    {
-        name: '5G 프리미어 래귤러',
-        detail: {
-            monthlyPrice: '10,000원',
-            tethering: '10GB',
-            sharing: '10GB',
-        },
-        addon: {
-            name: ['넷플릭스', '지니뮤직']
-        }
-    },
-];
-
 const MplanListPage: React.FC = () => {
+    const [currentPage, setCurrentPage] = useState(0);
+    const [totalPages, setTotalPages] = useState(0);
+    const [mplans, setMplans] = useState<Mplan[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        setLoading(true);
+        api.get<MplanPageResponse>(`/v1/mplan?page=${currentPage}`)
+            .then((res) => {
+                const response = res.data.mplansResponse;
+                setMplans(response.content);
+                setTotalPages(response.totalPages);
+            })
+            .catch((err) => {
+                console.error('요금제 데이터 로딩 실패:', err);
+            })
+            .finally(() => {
+                setLoading(false);
+            });
+    }, [currentPage]); // currentPage가 바뀔 때마다 실행
+
     return (
         <PageContainer
             initial={{ opacity: 0 }}
@@ -174,54 +145,88 @@ const MplanListPage: React.FC = () => {
             transition={{ duration: 0.5 }}
         >
             <Header />
-
             <ContentContainer
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2, duration: 0.5 }}
             >
-
                 <Title>U+ 요금제 전체보기</Title>
-                <PlansWrapper>
-                    {overviewData.map((plan, idx) => (
-                        <OverviewCard
-                            key={idx}
-                            as={motion.div}
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.3 + idx * 0.1, duration: 0.4 }}
-                        >
-                            <SectionBox flexRatio={2}>
-                                <div>
-                                    <PlanName>{plan.name}</PlanName>
-                                    <PlanDetail>
-                                        <div>월정액: {plan.detail.monthlyPrice}</div>
-                                        <div>테더링: {plan.detail.tethering}</div>
-                                        <div>쉐어링: {plan.detail.sharing}</div>
-                                    </PlanDetail>
-                                </div>
-                            </SectionBox>
 
-                            <Divider />
+                {loading ? (
+                    <div>불러오는 중...</div>
+                ) : (
+                    <PlansWrapper>
+                        {mplans.map((mplan, idx) => (
+                            <OverviewCard
+                                key={idx}
+                                as={motion.div}
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 0.3 + idx * 0.1, duration: 0.4 }}
+                            >
+                                <SectionBox flexRatio={2}>
+                                    <div>
+                                        <PlanName>{mplan.name}</PlanName>
+                                        <PlanDetail>
+                                            <div>월정액: {mplan.monthlyPrice}</div>
+                                            <div>기본 데이터량: {mplan.basicDataAmount}</div>
+                                            <div>쉐어링: {mplan.sharingData}</div>
+                                            <div>문자: {mplan.textMessage ? '무제한' : '기본제공'}</div>
+                                            <div>전화: {mplan.voiceCallVolume}</div>
+                                        </PlanDetail>
+                                    </div>
+                                </SectionBox>
 
-                            <SectionBox flexRatio={1}>
-                                <div>
-                                    <AddonLabel>부가서비스</AddonLabel>
-                                    <AddonItems>{plan.addon.name.join(', ')}</AddonItems>
-                                </div>
-                            </SectionBox>
-                        </OverviewCard>
-                    ))}
-                </PlansWrapper>
+                                <Divider />
+                                <SectionBox flexRatio={1}>
+                                    <div>
+                                        <AddonLabel>부가서비스</AddonLabel>
+                                        <AddonItems>
+                                            {mplan.addonGroupResponse === null ? (
+                                                <span>없음</span>
+                                            ) : (
+                                                <div>
+                                                    <strong>{mplan.addonGroupResponse.addonGroupName}</strong>
+                                                    <div style={{ marginTop: '8px' }}>
+                                                        {mplan.addonGroupResponse.addonGroupAddonsResponse
+                                                            .map((addon: Addon) => addon.name)
+                                                            .join(', ')}
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </AddonItems>
+                                    </div>
+                                </SectionBox>
+
+                            </OverviewCard>
+                        ))}
+                    </PlansWrapper>
+                )}
 
                 <PaginationWrapper>
-                    <PageButton>{'<'}</PageButton>
-                    <PageButton active>1</PageButton>
-                    <PageButton>2</PageButton>
-                    <PageButton>3</PageButton>
-                    <Ellipsis>…</Ellipsis>
-                    <PageButton>99</PageButton>
-                    <PageButton>{'>'}</PageButton>
+                    <PageButton
+                        disabled={currentPage === 0}
+                        onClick={() => setCurrentPage(prev => prev - 1)}
+                    >
+                        {'<'}
+                    </PageButton>
+
+                    {Array.from({ length: totalPages }, (_, idx) => (
+                        <PageButton
+                            key={idx}
+                            active={currentPage === idx}
+                            onClick={() => setCurrentPage(idx)}
+                        >
+                            {idx + 1}
+                        </PageButton>
+                    ))}
+
+                    <PageButton
+                        disabled={currentPage === totalPages - 1}
+                        onClick={() => setCurrentPage(prev => prev + 1)}
+                    >
+                        {'>'}
+                    </PageButton>
                 </PaginationWrapper>
             </ContentContainer>
         </PageContainer>
