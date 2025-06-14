@@ -4,6 +4,7 @@ import StartPage from './pages/StartPage';
 import LoginPage from './pages/LoginPage';
 import HomePage from './pages/HomePage';
 import PageTransition from './components/PageTransition';
+import MplanListPage from "./pages/MplanListPage.tsx";
 
 const Router: React.FC = () => {
   return (
@@ -20,7 +21,13 @@ const Router: React.FC = () => {
       } />
       <Route path="/home" element={<HomePage />} />
       <Route path="*" element={<Navigate to="/" replace />} />
+      <Route path="/plans" element={
+        <PageTransition>
+            <MplanListPage />
+        </PageTransition>
+      } />
     </Routes>
+
   );
 };
 
