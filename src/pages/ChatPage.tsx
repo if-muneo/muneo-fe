@@ -200,7 +200,8 @@ type ChatMessage = {
 };
 
 const ChatbotUI: React.FC = () => {
-  const [username, setUsername] = useState("박상윤");
+  const name = localStorage.getItem("username");
+  const [username, setUsername] = useState(name + "");
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const stompRef = useRef<Stomp.Client | null>(null);
@@ -211,6 +212,9 @@ const ChatbotUI: React.FC = () => {
   }, [messages]);
 
   useEffect(() => {
+
+    setMessages([{ sender: "bot", content: "안녕하세요, U+ 상담챗봇 무너입니다.\n무엇을 도와드릴까요?" }]);
+
     const socket = new SockJS(`http://localhost:8080/ws?username=${encodeURIComponent(username)}`);
     const client = Stomp.over(socket);
 
