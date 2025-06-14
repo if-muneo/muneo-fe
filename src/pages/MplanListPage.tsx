@@ -21,11 +21,16 @@ const Title = styled.h1`
     font-weight: 700;
     color: #111111;
     margin-bottom: 24px;
+    max-width: 960px;     // ✅ 카드와 너비 일치
+    width: 100%;
+    margin-left: auto;    // ✅ 가운데 정렬
+    margin-right: auto;
 `;
 
 const PlansWrapper = styled.div`
     display: flex;
     flex-direction: column;
+    align-items: center;   // ✅ 자식 요소들 가운데 정렬
     gap: 16px;
 `;
 
@@ -36,6 +41,8 @@ const OverviewCard = styled.div`
     border-radius: 12px;
     padding: 14px 24px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    width: 100%;
+    max-width: 960px;   // ✅ 카드 최대 너비 제한
 `;
 
 const SectionBox = styled.div<{ flexRatio?: number }>`
@@ -173,8 +180,8 @@ const MplanListPage: React.FC = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2, duration: 0.5 }}
             >
-                <Title>U+ 요금제 전체보기</Title>
 
+                <Title>U+ 요금제 전체보기</Title>
                 <PlansWrapper>
                     {overviewData.map((plan, idx) => (
                         <OverviewCard
