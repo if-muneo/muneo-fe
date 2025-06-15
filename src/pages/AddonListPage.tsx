@@ -3,7 +3,8 @@ import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import Header from '../components/Header';
 import api from '../util/axios';
-import type {DefaultAddon, DefaultAddonsResponse} from "../types/AddonList.ts";
+import type {DefaultAddonResponse} from "../types/AddonList.ts";
+import Pagination from "../components/Pagination.tsx";
 
 const PageContainer = styled(motion.div)`
     width: 100%;
@@ -59,46 +60,27 @@ const AddonName = styled.span`
     color: #333333;
 `;
 
-const PaginationWrapper = styled.div`
+const AddonDetail = styled.div`
     display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 8px;
-    margin-top: 32px;
-    width: 100%;
-`;
-
-const PageButton = styled.button<{ active?: boolean }>`
-    width: 40px;
-    height: 40px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 8px;
-    border: 1px solid ${({ active }) => (active ? '#815BFF' : '#D1D1D1')};
-    background-color: ${({ active }) => (active ? '#EDE1FF' : '#FFFFFF')};
-    color: ${({ active }) => (active ? '#815BFF' : '#333333')};
+    flex-direction: column;
     font-size: 16px;
-    cursor: pointer;
-
-    &:disabled {
-        opacity: 0.4;
-        cursor: not-allowed;
-    }
+    color: #555555;
+    line-height: 1.6;
+    margin-top: 8px;
 `;
 
 const AddonListPage: React.FC = () => {
     const [currentPage, setCurrentPage] = useState(0);
     const [totalPages, setTotalPages] = useState(0);
-    const [addons, setAddons] = useState<DefaultAddon[]>([]);
+    const [addons, setAddons] = useState<DefaultAddonResponse[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         setLoading(true);
-        api.get<{ defaultAddonsResponse: DefaultAddonsResponse }>(`/v1/addons?page=${currentPage}`)
+        api.get(`/v1/addon?page=${currentPage}`)
             .then(res => {
-                const response = res.data.defaultAddonsResponse;
-                setAddons(response.const);
+                const response = res.data.data.addonsResponse;
+                setAddons(response.content);
                 setTotalPages(response.totalPages);
             })
             .catch(err => {
@@ -107,7 +89,7 @@ const AddonListPage: React.FC = () => {
             .finally(() => {
                 setLoading(false);
             });
-    }, []);
+    }, [currentPage]);
 
     return (
         <PageContainer
@@ -139,6 +121,10 @@ const AddonListPage: React.FC = () => {
                                 <SectionBox flexRatio={2}>
                                     <div>
                                         <AddonName>{addon.name}</AddonName>
+                                        <AddonDetail>
+                                            <div>가격: {addon.price}</div>
+                                            <div>서비스 설명: {addon.description}</div>
+                                        </AddonDetail>
                                     </div>
                                 </SectionBox>
                             </OverviewCard>
@@ -146,31 +132,11 @@ const AddonListPage: React.FC = () => {
                     </AddonsWrapper>
                 )}
 
-                <PaginationWrapper>
-                    <PageButton
-                        disabled={currentPage === 0}
-                        onClick={() => setCurrentPage(prev => prev - 1)}
-                    >
-                        {'<'}
-                    </PageButton>
-
-                    {Array.from({ length: totalPages }, (_, idx) => (
-                        <PageButton
-                            key={idx}
-                            active={currentPage === idx}
-                            onClick={() => setCurrentPage(idx)}
-                        >
-                            {idx + 1}
-                        </PageButton>
-                    ))}
-
-                    <PageButton
-                        disabled={currentPage === totalPages - 1}
-                        onClick={() => setCurrentPage(prev => prev + 1)}
-                    >
-                        {'>'}
-                    </PageButton>
-                </PaginationWrapper>
+                <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={setCurrentPage}
+                />
             </ContentContainer>
         </PageContainer>
     );

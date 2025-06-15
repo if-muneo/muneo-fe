@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import Header from '../components/Header';
 import api from '../util/axios';
-import type {Addon, Mplan, MplanPageResponse} from "../types/MplanList.ts";
+import type {Addon, Mplan} from "../types/MplanList.ts";
 import Pagination from '../components/Pagination';
 
 const PageContainer = styled(motion.div)`
@@ -97,7 +97,7 @@ const MplanListPage: React.FC = () => {
 
     useEffect(() => {
         setLoading(true);
-        api.get<MplanPageResponse>(`/v1/mplan?page=${currentPage}`)
+        api.get(`/v1/mplan?page=${currentPage}`)
             .then((res) => {
                 const response = res.data.data.mplansResponse;
                 console.log('response = ', response);

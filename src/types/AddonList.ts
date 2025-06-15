@@ -1,4 +1,4 @@
-export interface DefaultAddon {
+export interface DefaultAddonResponse {
     id: number;
     name: string;
     description: string;
@@ -8,7 +8,7 @@ export interface DefaultAddon {
 
 export interface DefaultAddonsResponse {
     defaultAddonsResponse: {
-        content: DefaultAddon[];
+        content: DefaultAddonResponse[];
         totalPages: number;
         number: number;
         totalElements: number;
