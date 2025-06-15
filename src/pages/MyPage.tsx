@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import Header from '../components/Header';
+import api from '../util/axios';
 
 const PageContainer = styled(motion.div)`
     width: 100%;
@@ -47,14 +48,39 @@ const Field = styled.div`
     }
 `;
 
+interface UserInfo {
+    name: string;
+    plan: string;
+    phone: string;
+    signUpDate: string;
+    services: string[];
+    dataRemaining: string;
+}
+
 const MyPage: React.FC = () => {
+    // const [user, setUser] = useState<UserInfo | null>(null);
+    const [loading, setLoading] = useState(true);
+
+    // ✅ 사용자 정보 요청
+    useEffect(() => {
+        api.get('/v1/users/me') // ← 백엔드 API 주소에 맞게 수정
+            .then((res) => {
+                // setUser(res.data);
+            })
+            .catch((err) => {
+                console.error('사용자 정보 불러오기 실패:', err);
+            })
+            .finally(() => {
+                setLoading(false);
+            });
+    }, []);
     const user = {
-        name: '홍길동',
-        plan: '데이터 무제한 69',
-        phone: '010-1234-5678',
-        signUpDate: '2023-01-15',
-        services: ['부가서비스 1', '부가서비스 2', '부가서비스 3', '부가서비스 4'],
-        dataRemaining: '10GB',
+        name: 'test',
+        plan: 'test',
+        phone: 'test',
+        signUpDate: 'test',
+        services: ['test', 'test', 'test', 'test'],
+        dataRemaining: 'test',
     };
 
     return (
@@ -92,7 +118,7 @@ const MyPage: React.FC = () => {
                             <span className="label">사용 중인 부가서비스:</span>
                             {user.services.join(', ')}
                         </Field>
-                        <Field><span className="label">남은 데이터량:</span>{user.dataRemaining}</Field>
+                        <Field><span className="label">남은 데이터량:</span>{user.dataRemaining}GB</Field>
                     </InfoCard>
                 </motion.div>
             </ContentContainer>
