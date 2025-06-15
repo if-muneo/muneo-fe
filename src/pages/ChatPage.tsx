@@ -4,6 +4,7 @@ import SockJS from "sockjs-client";
 import Stomp from "stompjs";
 import Button from "../components/Button";
 import logoHeader from "../assets/logos/logo-header.png";
+import { formatBotMessage } from "../util/formatBoxMessage";
 
 const ChatWrapper = styled.div`
   width: 840px;
@@ -100,12 +101,12 @@ const Avatar = styled.div`
 const SpeechBubble = styled.div`
   position: relative;
   background-color: white;
-  padding: 12px 16px;
-  border-radius: 16px;
+  padding: 10px 12px;
+  border-radius: 8px;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
   font-size: 14px;
   line-height: 1.5;
-  max-width: 70%;
+  max-width: 100%;
 
   &::before {
     content: "";
@@ -123,8 +124,8 @@ const SpeechBubble = styled.div`
 const SpeechBubbleUser = styled.div`
   position: relative;
   background-color: white;
-  padding: 12px 16px;
-  border-radius: 16px;
+  padding: 10px 12px;
+  border-radius: 8px;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
   font-size: 14px;
   line-height: 1.5;
@@ -143,11 +144,6 @@ const SpeechBubbleUser = styled.div`
   }
 `;
 
-const blink = keyframes`
-  0%, 100% { opacity: 0.2; }
-  50% { opacity: 1; }
-`;
-
 const TypingBubble = styled(SpeechBubble)`
   display: flex;
   align-items: center;
@@ -156,8 +152,8 @@ const TypingBubble = styled(SpeechBubble)`
 
   & span {
     display: inline-block;
-    width: 12px;
-    height: 12px;
+    width: 6px;
+    height: 6px;
     background-color: #999;
     border-radius: 50%; // 꼭 이걸로 둥글게!
     animation: bounce 1.2s infinite ease-in-out both;
@@ -181,16 +177,6 @@ const TypingBubble = styled(SpeechBubble)`
       opacity: 1;
     }
   }
-`;
-
-const Dot = styled.div`
-  width: 6px;
-  height: 6px;
-  background-color: #999;
-  border-radius: 50%;
-  animation: ${blink} 1.2s infinite;
-  &:nth-child(2) { animation-delay: 0.2s; }
-  &:nth-child(3) { animation-delay: 0.4s; }
 `;
 
 type ChatMessage = {
@@ -269,13 +255,21 @@ const ChatbotUI: React.FC = () => {
                     <span></span>
                   </TypingBubble>
                 ) : (
-                  <SpeechBubble>{m.content}</SpeechBubble>
+                  <SpeechBubble>
+                    {formatBotMessage(m.content).map((line, idx) => (
+                      <p key={idx} style={{ margin: "0 0 2px 0" }}>{line}</p>
+                    ))}
+                  </SpeechBubble>
                 )}
               </div>
             </BotMessage>
           ) : (
             <UserMessage key={i}>
-              <SpeechBubbleUser>{m.content}</SpeechBubbleUser>
+              <SpeechBubbleUser>
+                {formatBotMessage(m.content).map((line, idx) => (
+                  <p key={idx} style={{ margin: "0 0 2px 0" }}>{line}</p>
+                ))}
+              </SpeechBubbleUser>
             </UserMessage>
           )
         )}
