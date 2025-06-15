@@ -186,7 +186,6 @@ const MplanListPage: React.FC = () => {
                         ))}
                     </PlansWrapper>
                 )}
-
                 <Pagination
                     currentPage={currentPage}
                     totalPages={totalPages}

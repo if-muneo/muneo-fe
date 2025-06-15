@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import type { Mplan } from '../types/MplanList';
 import Header from '../components/Header';
+import ReviewBox from '../components/ReviewBox';
 
 const PageContainer = styled(motion.div)`
     width: 100%;
@@ -65,28 +66,6 @@ const BackButton = styled.button`
         background-color: #e6006b;
     }
 `;
-
-const imageMap: { [key: string]: string } = {
-    '넷플릭스': '/images/netflix.png',
-    '지니뮤직': '/images/genie.png',
-    '밀리의 서재': '/images/millie.png',
-    '아이들 나라': '/images/kids.png',
-    '바이브 앱': '/images/vibe.png',
-    '유플레이': '/images/uplay.png',
-    '디즈니 뿌라스': '/images/disney.png',
-    '티빙': '/images/tving.png',
-    '삼성팩': '/images/samsung.png',
-    '애플팩': '/images/apple.png',
-    '유튜브 프리미엄': '/images/youtube.png',
-    '헬로렌탈': '/images/hello.png',
-    '일리커피': '/images/illy.png',
-    'u+ 모바일 tv': '/images/utv.png',
-    '우리집 지키미 easy2': '/images/easy2.png',
-    '우리집돌봄이 kids': '/images/kids_guard.png',
-    '신한카드 AIR': '/images/shinhan.png',
-    '군인할인': '/images/military.png',
-};
-
 
 const UserMplanDetailPage: React.FC = () => {
     const location = useLocation();
@@ -172,6 +151,7 @@ const UserMplanDetailPage: React.FC = () => {
 
                     <BackButton onClick={() => navigate(-1)}>뒤로가기</BackButton>
                 </OverviewCard>
+                <ReviewBox mplanId={mplan.id} />
             </ContentContainer>
         </PageContainer>
     );
