@@ -5,6 +5,7 @@ import Header from '../components/Header';
 import api from '../util/axios';
 import type {Addon, Mplan} from "../types/MplanList.ts";
 import Pagination from '../components/Pagination';
+import { useNavigate } from 'react-router-dom';
 
 const PageContainer = styled(motion.div)`
     width: 100%;
@@ -95,6 +96,8 @@ const MplanListPage: React.FC = () => {
     const [mplans, setMplans] = useState<Mplan[]>([]);
     const [loading, setLoading] = useState(true);
 
+    const navigate = useNavigate();
+
     useEffect(() => {
         setLoading(true);
         api.get(`/v1/mplan?page=${currentPage}`)
@@ -137,16 +140,18 @@ const MplanListPage: React.FC = () => {
                                 initial={{ opacity: 0, y: 10 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: 0.3 + idx * 0.1, duration: 0.4 }}
+                                onClick={() => navigate(`/mplan/${mplan.id}`, { state: mplan })}
+                                style={{ cursor: 'pointer' }}
                             >
                                 <SectionBox flexRatio={2}>
                                     <div>
                                         <PlanName>{mplan.name}</PlanName>
                                         <PlanDetail>
-                                            <div>월정액: {mplan.monthlyPrice}</div>
-                                            <div>기본 데이터량: {mplan.basicDataAmount}</div>
-                                            <div>쉐어링: {mplan.sharingData}</div>
-                                            <div>문자: {mplan.textMessage ? '무제한' : '기본제공'}</div>
-                                            <div>전화: {mplan.voiceCallVolume}</div>
+                                            <div>월정액: {mplan.monthlyPrice.toLocaleString()}원</div>
+                                            <div>기본 데이터량: {(mplan.basicDataAmount / 1000).toLocaleString()}GB</div>
+                                            {/*<div>쉐어링: {mplan.sharingData.toLocaleString()}GB</div>*/}
+                                            {/*<div>문자: {mplan.textMessage ? '무제한' : '기본제공'}</div>*/}
+                                            {/*<div>전화: {mplan.voiceCallVolume.toLocaleString()}</div>*/}
                                         </PlanDetail>
                                     </div>
                                 </SectionBox>
