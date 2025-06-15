@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import Logo from '../components/Logo';
 import Input from '../components/Input';
 import Button from '../components/Button';
+import api from "../util/axios.ts";
 
 const PageContainer = styled.div`
   display: flex;
@@ -58,17 +59,23 @@ const ForgotPassword = styled(motion.a)`
 `;
 
 const LoginPage: React.FC = () => {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
-  
-  const handleSubmit = (e: React.FormEvent) => {
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // 실제 로그인 로직 구현하기
-    console.log('로그인 시도:', username, password);
-    
-    // 로그인 성공 후 홈페이지로 이동
-    navigate('/home');
+    try {
+      const res = await api.post('/api/auth/login', { email, password });
+
+      // 로그인 성공하면 사용자 이름/역할 저장
+       localStorage.setItem("username", res.data.name);
+      localStorage.setItem("role",  res.data.role);
+      navigate("/home");
+    } catch (error) {
+      console.error('로그인 실패:', error);
+     console.log(error);
+    }
   };
   
   return (
@@ -94,17 +101,17 @@ const LoginPage: React.FC = () => {
           로그인
         </Title>
         
-        <Form onSubmit={handleSubmit}>
+        <Form onSubmit={handleSubmit} >
           <motion.div
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.3, duration: 0.5 }}
           >
             <Input 
-              label="아이디" 
-              placeholder="아이디를 입력해주세요" 
-              value={username} 
-              onChange={(e) => setUsername(e.target.value)}
+              label="이메일"
+              placeholder="이메일를 입력해주세요"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               required 
             />
           </motion.div>

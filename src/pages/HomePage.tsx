@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import Header from '../components/Header';
 import Banner from '../components/Banner';
 import Section from '../components/Section';
 import Card from '../components/Card';
+import ChatModal from "./ChatModal.tsx";
+
 
 interface CardData {
   title: string;
@@ -18,6 +20,13 @@ import giftIcon from '../assets/icons/icon1.png';
 import heartIcon from '../assets/icons/icon3.png';
 import rocketIcon from '../assets/icons/icon4.png';
 import logoGif from '../assets/logos/logo.gif';
+import netflix from '../assets/icons/iconNetflix.png';
+import lock from '../assets/icons/iconLock.png';
+import call from '../assets/icons/iconCall.png';
+import handphone from '../assets/icons/iconHandphone.png';
+import discount from '../assets/icons/iconDiscount.png';
+import MiniCard from "../components/MiniCard.tsx";
+import AddOnSection from "../components/AddOnSection.tsx";
 
 const PageContainer = styled(motion.div)`
   width: 100%;
@@ -74,27 +83,41 @@ const HomePage: React.FC = () => {
     }
   ];
 
-  const serviceCards: CardData[] = [
+  const addonCards: CardData[] = [
     {
-      title: "프리미엄 콘텐츠",
-      description: "OTT 서비스 무제한 이용",
-      icon: heartIcon,
-      color: "linear-gradient(146.52deg, #FBE7E7 13.34%, #F2B7B7 100.61%)"
+      title: "미디어",
+      description: "Netflix 등 미디어 서비스",
+      icon: netflix, // 실제 아이콘 경로로 변경
+      color: "#FFF6D1"
     },
     {
-      title: "클라우드 백업",
-      description: "사진, 연락처 안전하게 저장",
-      icon: rocketIcon,
-      color: "linear-gradient(167.88deg, #EFEAFB 13.82%, #DACBFF 96.65%)"
+      title: "보안",
+      description: "보안 서비스 이용",
+      icon: lock,
+      color: "#FFF6D1"
     },
     {
-      title: "해외 로밍 서비스",
-      description: "글로벌 데이터 요금제",
-      icon: giftIcon,
-      color: "linear-gradient(157.89deg, #F3D6F8 17.72%, #D376E5 135.78%)",
-      iconType: "gift"
+      title: "기기 할부",
+      description: "기기 분할 납부 혜택",
+      icon: handphone,
+      color: "#FFF6D1"
+    },
+    {
+      title: "할인",
+      description: "요금 할인 및 프로모션",
+      icon: discount,
+      color: "#FFF6D1"
+    },
+    {
+      title: "통화",
+      description: "무제한 통화 등 혜택",
+      icon: call,
+      color: "#FFF6D1"
     }
   ];
+
+  const [showChat, setShowChat] = useState(false);
+
 
   return (
     <PageContainer
@@ -115,13 +138,13 @@ const HomePage: React.FC = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4, duration: 0.5 }}
         >
-          <Section 
+          <Section
             title="주요 5G 요금제를 확인해보세요" 
             linkText="더 많은 요금제 구경하기"
             linkUrl="/plans"
           >
           {planCards.map((card, index) => (
-            <Card 
+            <Card
               key={index}
               title={card.title}
               description={card.description}
@@ -138,22 +161,19 @@ const HomePage: React.FC = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6, duration: 0.5 }}
         >
-          <Section 
-            title="다양한 부가서비스를 경험해보세요" 
-            linkText="이용 가능한 부가서비스 구경하기"
-            linkUrl="/services"
+          <AddOnSection
+              title="다양한 부가서비스를 경험해보세요"
+              linkText="이용 가능한 부가서비스 구경하기"
+              linkUrl="/addons"
           >
-          {serviceCards.map((card, index) => (
-            <Card 
-              key={index}
-              title={card.title}
-              description={card.description}
-              icon={card.icon}
-              color={card.color}
-              iconType={card.iconType}
-            />
-          ))}
-        </Section>
+            {addonCards.map((card, index) => (
+                <MiniCard
+                    key={index}
+                    title={card.title}
+                    icon={card.icon}
+                />
+            ))}
+          </AddOnSection>
         </motion.div>
       </ContentContainer>
       
@@ -161,9 +181,11 @@ const HomePage: React.FC = () => {
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
         transition={{ type: "spring", stiffness: 400, damping: 17 }}
+        onClick={() => setShowChat(true)}
       >
         <img src={logoGif} alt="무너 로고" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
       </FloatingButton>
+      {showChat && <ChatModal onClose={() => setShowChat(false)} />}
     </PageContainer>
   );
 };
