@@ -144,16 +144,16 @@ const SpeechBubbleUser = styled.div`
   }
 `;
 
-const TypingBubble = styled(SpeechBubble)`
+const TypingBubble = styled.div`
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 16px; // 여유 있게
+  padding: 10px 0px 10px 0px; // 여유 있게
 
   & span {
     display: inline-block;
-    width: 6px;
-    height: 6px;
+    width: 4px;
+    height: 4px;
     background-color: #999;
     border-radius: 50%; // 꼭 이걸로 둥글게!
     animation: bounce 1.2s infinite ease-in-out both;
@@ -168,21 +168,24 @@ const TypingBubble = styled(SpeechBubble)`
   }
 
   @keyframes bounce {
-    0%, 80%, 100% {
-      transform: scale(0.8);
-      opacity: 0.5;
-    }
-    40% {
-      transform: scale(1.4);
-      opacity: 1;
-    }
+  0%, 80%, 100% {
+    transform: scale(0.8);
+    opacity: 0.5;
   }
+  40% {
+    transform: scale(1.4);
+    opacity: 1;
+  }
+}
 `;
 
 type ChatMessage = {
   sender: string;
   content: string;
   loading?: boolean;
+  streamId?: string;
+  done?: boolean;
+  started?: boolean;
 };
 
 const ChatbotUI: React.FC = () => {
@@ -207,9 +210,40 @@ const ChatbotUI: React.FC = () => {
     client.connect({}, () => {
       client.subscribe("/user/queue/public", (msg) => {
         const payload: ChatMessage = JSON.parse(msg.body);
+
+        // streamId 없는 메시지는 무시
+        if (!payload.streamId) return;
+
         setMessages((prev) => {
-          const updated = prev.filter((m) => !m.loading);
-          return [...updated, { sender: "bot", content: payload.content }];
+          const existingIndex = prev.findIndex((m) => m.streamId === payload.streamId);
+
+          if (payload.done) {
+            return prev.map((m) =>
+              m.streamId === payload.streamId ? { ...m, loading: false } : m
+            );
+          }
+
+          if (existingIndex !== -1) {
+            const updated = [...prev];
+            const target = updated[existingIndex];
+            updated[existingIndex] = {
+              ...target,
+              content: target.content + payload.content,
+              loading: !payload.done,
+              started: true,
+            };
+            return updated;
+          } else {
+            return [
+              ...prev,
+              {
+                sender: "bot",
+                content: payload.content,
+                streamId: payload.streamId,
+                loading: true,
+              },
+            ];
+          }
         });
       });
 
@@ -228,11 +262,22 @@ const ChatbotUI: React.FC = () => {
   const send = () => {
     if (!input.trim() || !stompRef.current?.connected) return;
 
+    const streamId = crypto.randomUUID();
     const userMsg: ChatMessage = { sender: username, content: input };
-    const loadingMsg: ChatMessage = { sender: "bot", content: "", loading: true };
+    const botMsg: ChatMessage = {
+      sender: "bot",
+      content: "",
+      streamId,
+      loading: true
+    };
 
-    stompRef.current.send("/pub/chat/message", {}, JSON.stringify(userMsg));
-    setMessages((prev) => [...prev, userMsg, loadingMsg]);
+    stompRef.current.send("/pub/chat/message", {}, JSON.stringify({
+      sender: username,
+      content: input,
+      streamId
+    }));
+
+    setMessages((prev) => [...prev, userMsg]);
     setInput("");
   };
 
@@ -242,25 +287,25 @@ const ChatbotUI: React.FC = () => {
       <ChatBody ref={chatBodyRef}>
         {messages.map((m, i) =>
           m.sender === "bot" ? (
-            <BotMessage key={i}>
+            <BotMessage key={m.streamId ?? i}>
               <Avatar>
                 <img src={logoHeader} alt="로고 헤더" />
               </Avatar>
               <div>
                 <div style={{ fontSize: "13px", fontWeight: 600, marginBottom: "4px" }}>무너</div>
-                {m.loading ? (
-                  <TypingBubble>
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                  </TypingBubble>
-                ) : (
-                  <SpeechBubble>
-                    {formatBotMessage(m.content).map((line, idx) => (
-                      <p key={idx} style={{ margin: "0 0 2px 0" }}>{line}</p>
-                    ))}
-                  </SpeechBubble>
-                )}
+                <SpeechBubble>
+                  {!m.started && m.loading && (
+                    <TypingBubble>
+                      <span></span>
+                      <span></span>
+                      <span></span>
+                    </TypingBubble>
+                  )}
+
+                  {m.content && formatBotMessage(m.content).map((line, idx) => (
+                    <p key={idx} style={{ margin: "0 0 2px 0" }}>{line}</p>
+                  ))}
+                </SpeechBubble>
               </div>
             </BotMessage>
           ) : (
