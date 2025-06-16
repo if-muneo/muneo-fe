@@ -8,6 +8,9 @@ interface Review {
     content: string;
     createdAt: string;
     userId: number;
+    memberResponse: {
+        name: string;
+    }
 }
 
 interface ReviewBoxProps {
@@ -76,8 +79,8 @@ const ReviewBox: React.FC<ReviewBoxProps> = ({ mplanId }) => {
 
     // 리뷰 목록 조회
     useEffect(() => {
-        api.get(`/v1/reviews/${mplanId}`)
-            .then((res) => setReviews(res.data))
+        api.get(`/v1/${mplanId}/review`)
+            .then((res) => setReviews(res.data.data.reviewsResponse))
             .catch((err) => console.error('리뷰 불러오기 실패:', err));
     }, [mplanId]);
 
@@ -86,15 +89,14 @@ const ReviewBox: React.FC<ReviewBoxProps> = ({ mplanId }) => {
         if (!newReview.trim()) return;
 
         try {
-            await api.post('/v1/reviews', {
-                mplanId,
+            await api.post(`/v1/${mplanId}/review`, {
                 content: newReview.trim(),
             });
 
             setNewReview('');
             // 등록 후 목록 다시 불러오기
-            const res = await api.get(`/v1/reviews/${mplanId}`);
-            setReviews(res.data);
+            const res = await api.get(`/v1/${mplanId}/review`);
+            setReviews(res.data.data.reviewsResponse);
         } catch (err) {
             console.error('리뷰 등록 실패:', err);
         }
@@ -111,7 +113,7 @@ const ReviewBox: React.FC<ReviewBoxProps> = ({ mplanId }) => {
                     reviews.map((review) => (
                         <ReviewItem key={review.id}>
                             <div style={{ marginBottom: '4px', fontWeight: 600 }}>
-                                사용자 #{review.userId}
+                                {review.memberResponse.name}{review.userId}
                             </div>
                             <div>{review.content}</div>
                             <div style={{ fontSize: '12px', color: '#999', marginTop: '4px' }}>

@@ -8,6 +8,7 @@ import PageTransition from './components/PageTransition';
 import MplanListPage from "./pages/MplanListPage.tsx";
 import AddonListPage from "./pages/AddonListPage.tsx";
 import UserMplanDetailPage from "./pages/UserMplanDetailPage.tsx";
+import MyPage from "./pages/MyPage.tsx";
 
 const Router: React.FC = () => {
   return (
