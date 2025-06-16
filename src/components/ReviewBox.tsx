@@ -94,15 +94,6 @@ const ReviewBox: React.FC<ReviewBoxProps> = ({ mplanId }) => {
 
     const username = localStorage.getItem("username");
 
-    const fetchReviews = async () => {
-        try {
-            const res = await api.get(`/v1/${mplanId}/review`);
-            setReviews(res.data.data.reviewsResponse);
-        } catch (err) {
-            console.error('리뷰 불러오기 실패:', err);
-        }
-    };
-
     useEffect(() => {
         api.get(`/v1/${mplanId}/review`)
             .then((res) => setReviews(res.data.data.reviewsResponse))
@@ -139,7 +130,7 @@ const ReviewBox: React.FC<ReviewBoxProps> = ({ mplanId }) => {
 
     return (
         <ReviewSection>
-            <ReviewTitle>이 요금제에 대한 리뷰</ReviewTitle>
+            <ReviewTitle>Review</ReviewTitle>
 
             <ReviewList>
                 {reviews.length === 0 ? (
