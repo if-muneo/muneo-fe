@@ -138,7 +138,7 @@ const UserMplanDetailPage: React.FC = () => {
                             >
                                 {addonList.map((addon) => (
                                     <li key={addon.id}>
-                                        {addon.name} - {addon.price.toLocaleString()}원
+                                        {addon.name} - {(addon.price ?? 0).toLocaleString()}원
                                     </li>
                                 ))}
                             </ul>
@@ -149,7 +149,7 @@ const UserMplanDetailPage: React.FC = () => {
                         </div>
                     )}
 
-                    <BackButton onClick={() => navigate(-1)}>뒤로가기</BackButton>
+                    <BackButton onClick={() => navigate(-1)}>목록으로</BackButton>
                 </OverviewCard>
                 <ReviewBox mplanId={mplan.id} />
             </ContentContainer>
