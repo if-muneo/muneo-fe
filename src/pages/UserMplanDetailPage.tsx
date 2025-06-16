@@ -149,7 +149,7 @@ const UserMplanDetailPage: React.FC = () => {
                         </div>
                     )}
 
-                    <BackButton onClick={() => navigate(-1)}>뒤로가기</BackButton>
+                    <BackButton onClick={() => navigate(-1)}>목록으로</BackButton>
                 </OverviewCard>
                 <ReviewBox mplanId={mplan.id} />
             </ContentContainer>

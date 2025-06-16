@@ -100,7 +100,8 @@ const MplanListPage: React.FC = () => {
 
     useEffect(() => {
         setLoading(true);
-        api.get(`/v1/mplan?page=${currentPage}`)
+        api.get(`/v1/mplan`)
+        // api.get(`/v1/mplan?page=${currentPage}`)
             .then((res) => {
                 const response = res.data.data.mplansResponse;
                 console.log('response = ', response);

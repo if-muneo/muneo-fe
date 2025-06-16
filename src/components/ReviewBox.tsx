@@ -1,4 +1,3 @@
-// src/components/ReviewBox.tsx
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import api from '../util/axios';
@@ -10,7 +9,7 @@ interface Review {
     userId: number;
     memberResponse: {
         name: string;
-    }
+    };
 }
 
 interface ReviewBoxProps {
@@ -46,6 +45,22 @@ const ReviewItem = styled.li`
     margin-bottom: 10px;
     font-size: 14px;
     color: #333;
+    position: relative;
+`;
+
+const DeleteButton = styled.button`
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    font-size: 12px;
+    background: none;
+    border: none;
+    color: #999;
+    cursor: pointer;
+
+    &:hover {
+        color: #FF007C;
+    }
 `;
 
 const ReviewInput = styled.textarea`
@@ -77,14 +92,23 @@ const ReviewBox: React.FC<ReviewBoxProps> = ({ mplanId }) => {
     const [reviews, setReviews] = useState<Review[]>([]);
     const [newReview, setNewReview] = useState('');
 
-    // 리뷰 목록 조회
+    const username = localStorage.getItem("username");
+
+    const fetchReviews = async () => {
+        try {
+            const res = await api.get(`/v1/${mplanId}/review`);
+            setReviews(res.data.data.reviewsResponse);
+        } catch (err) {
+            console.error('리뷰 불러오기 실패:', err);
+        }
+    };
+
     useEffect(() => {
         api.get(`/v1/${mplanId}/review`)
             .then((res) => setReviews(res.data.data.reviewsResponse))
             .catch((err) => console.error('리뷰 불러오기 실패:', err));
     }, [mplanId]);
 
-    // 리뷰 등록
     const handleSubmit = async () => {
         if (!newReview.trim()) return;
 
@@ -102,6 +126,17 @@ const ReviewBox: React.FC<ReviewBoxProps> = ({ mplanId }) => {
         }
     };
 
+    const handleDelete = async (reviewId: number) => {
+        try {
+            await api.delete(`/v1/${mplanId}/review`, {
+                data: { id: reviewId },
+            });
+            setReviews((prev) => prev.filter((r) => r.id !== reviewId));
+        } catch (err) {
+            console.error('리뷰 삭제 실패:', err);
+        }
+    };
+
     return (
         <ReviewSection>
             <ReviewTitle>이 요금제에 대한 리뷰</ReviewTitle>
@@ -112,6 +147,9 @@ const ReviewBox: React.FC<ReviewBoxProps> = ({ mplanId }) => {
                 ) : (
                     reviews.map((review) => (
                         <ReviewItem key={review.id}>
+                            {review.memberResponse.name === username && (
+                                <DeleteButton onClick={() => handleDelete(review.id)}>삭제</DeleteButton>
+                            )}
                             <div style={{ marginBottom: '4px', fontWeight: 600 }}>
                                 {review.memberResponse.name}{review.userId}
                             </div>
