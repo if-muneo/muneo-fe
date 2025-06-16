@@ -79,7 +79,7 @@ const UserMplanDetailPage: React.FC = () => {
             <PageContainer>
                 <ContentContainer>
                     <Title>잘못된 접근입니다.</Title>
-                    <BackButton onClick={() => navigate(-1)}>뒤로가기</BackButton>
+                    <BackButton onClick={() => navigate(-1)}>목록으로</BackButton>
                 </ContentContainer>
             </PageContainer>
         );
