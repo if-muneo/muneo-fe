@@ -48,6 +48,12 @@ const Router: React.FC = () => {
                 <UserMplanDetailPage />
             </PageTransition>
         } />
+
+      <Route path="/mypage" element={
+          <PageTransition>
+              <MyPage />
+          </PageTransition>
+      } />
     </Routes>
 
   );
