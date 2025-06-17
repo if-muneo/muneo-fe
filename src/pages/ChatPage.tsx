@@ -185,12 +185,11 @@ type ChatMessage = {
   loading?: boolean;
   streamId?: string;
   done?: boolean;
-  started?: boolean;
 };
 
 const ChatbotUI: React.FC = () => {
-  const name = localStorage.getItem("username");
-  const [username, setUsername] = useState(name + "");
+  const name = localStorage.getItem("username") || "";
+  const [username, setUsername] = useState(name);
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const stompRef = useRef<Stomp.Client | null>(null);
@@ -201,8 +200,13 @@ const ChatbotUI: React.FC = () => {
   }, [messages]);
 
   useEffect(() => {
-
-    setMessages([{ sender: "bot", content: "안녕하세요, U+ 상담챗봇 무너입니다.\n무엇을 도와드릴까요?" }]);
+    setMessages([
+      {
+        sender: "bot",
+        content: "안녕하세요, U+ 상담챗봇 무너입니다.\n무엇을 도와드릴까요?",
+        streamId: "intro"
+      },
+    ]);
 
     const socket = new SockJS(`http://localhost:8080/ws?username=${encodeURIComponent(username)}`);
     const client = Stomp.over(socket);
@@ -210,40 +214,29 @@ const ChatbotUI: React.FC = () => {
     client.connect({}, () => {
       client.subscribe("/user/queue/public", (msg) => {
         const payload: ChatMessage = JSON.parse(msg.body);
-
-        // streamId 없는 메시지는 무시
         if (!payload.streamId) return;
 
         setMessages((prev) => {
-          const existingIndex = prev.findIndex((m) => m.streamId === payload.streamId);
-
-          if (payload.done) {
-            return prev.map((m) =>
-              m.streamId === payload.streamId ? { ...m, loading: false } : m
-            );
-          }
-
+          const existingIndex = prev.findIndex(m => m.streamId === payload.streamId);
           if (existingIndex !== -1) {
             const updated = [...prev];
-            const target = updated[existingIndex];
             updated[existingIndex] = {
-              ...target,
-              content: target.content + payload.content,
-              loading: !payload.done,
-              started: true,
+              ...updated[existingIndex],
+              content: updated[existingIndex].content + payload.content,
+              loading: !payload.done
             };
             return updated;
-          } else {
-            return [
-              ...prev,
-              {
-                sender: "bot",
-                content: payload.content,
-                streamId: payload.streamId,
-                loading: true,
-              },
-            ];
           }
+
+          return [
+            ...prev,
+            {
+              sender: "bot",
+              content: payload.content,
+              streamId: payload.streamId,
+              loading: !payload.done,
+            },
+          ];
         });
       });
 
@@ -251,18 +244,16 @@ const ChatbotUI: React.FC = () => {
     });
 
     return () => {
-      if (client && client.connected) {
-        client.disconnect(() => {
-          console.log("WebSocket disconnected.");
-        });
-      }
+      if (client.connected) client.disconnect(() => {
+        console.log("disconnect");
+      });
     };
   }, []);
 
   const send = () => {
     if (!input.trim() || !stompRef.current?.connected) return;
-
     const streamId = crypto.randomUUID();
+
     const userMsg: ChatMessage = { sender: username, content: input };
     const botMsg: ChatMessage = {
       sender: "bot",
@@ -274,10 +265,10 @@ const ChatbotUI: React.FC = () => {
     stompRef.current.send("/pub/chat/message", {}, JSON.stringify({
       sender: username,
       content: input,
-      streamId
+      streamId,
     }));
 
-    setMessages((prev) => [...prev, userMsg]);
+    setMessages((prev) => [...prev, userMsg, botMsg]);
     setInput("");
   };
 
@@ -288,23 +279,17 @@ const ChatbotUI: React.FC = () => {
         {messages.map((m, i) =>
           m.sender === "bot" ? (
             <BotMessage key={m.streamId ?? i}>
-              <Avatar>
-                <img src={logoHeader} alt="로고 헤더" />
-              </Avatar>
+              <Avatar><img src={logoHeader} alt="로고" /></Avatar>
               <div>
-                <div style={{ fontSize: "13px", fontWeight: 600, marginBottom: "4px" }}>무너</div>
+                <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 4 }}>무너</div>
                 <SpeechBubble>
-                  {!m.started && m.loading && (
-                    <TypingBubble>
-                      <span></span>
-                      <span></span>
-                      <span></span>
-                    </TypingBubble>
+                  {m.loading && !m.content.trim() ? (
+                    <TypingBubble><span /><span /><span /></TypingBubble>
+                  ) : (
+                    formatBotMessage(m.content).map((line, idx) => (
+                      <p key={idx} style={{ margin: 0 }}>{line}</p>
+                    ))
                   )}
-
-                  {m.content && formatBotMessage(m.content).map((line, idx) => (
-                    <p key={idx} style={{ margin: "0 0 2px 0" }}>{line}</p>
-                  ))}
                 </SpeechBubble>
               </div>
             </BotMessage>
@@ -312,7 +297,7 @@ const ChatbotUI: React.FC = () => {
             <UserMessage key={i}>
               <SpeechBubbleUser>
                 {formatBotMessage(m.content).map((line, idx) => (
-                  <p key={idx} style={{ margin: "0 0 2px 0" }}>{line}</p>
+                  <p key={idx} style={{ margin: 0 }}>{line}</p>
                 ))}
               </SpeechBubbleUser>
             </UserMessage>
