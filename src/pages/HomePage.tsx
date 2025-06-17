@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import Header from '../components/Header';
 import Banner from '../components/Banner';
 import Section from '../components/Section';
 import Card from '../components/Card';
+import ChatModal from "./ChatModal.tsx";
+
 
 interface CardData {
   title: string;
@@ -114,6 +116,9 @@ const HomePage: React.FC = () => {
     }
   ];
 
+  const [showChat, setShowChat] = useState(false);
+
+
   return (
     <PageContainer
       initial={{ opacity: 0 }}
@@ -176,9 +181,11 @@ const HomePage: React.FC = () => {
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
         transition={{ type: "spring", stiffness: 400, damping: 17 }}
+        onClick={() => setShowChat(true)}
       >
         <img src={logoGif} alt="무너 로고" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
       </FloatingButton>
+      {showChat && <ChatModal onClose={() => setShowChat(false)} />}
     </PageContainer>
   );
 };

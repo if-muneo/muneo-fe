@@ -63,11 +63,13 @@ const LoginPage: React.FC = () => {
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
+  console.log("login start")
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      console.log("login post start");
       const res = await api.post('/api/auth/login', { email, password });
-
+      console.log("login post end");
       // 로그인 성공하면 사용자 이름/역할 저장
        localStorage.setItem("username", res.data.name);
       localStorage.setItem("role",  res.data.role);
