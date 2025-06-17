@@ -1,34 +1,38 @@
 import React from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import StartPage from './pages/StartPage';
 import LoginPage from './pages/LoginPage';
 import HomePage from './pages/HomePage';
 import AdminPage from './pages/AdminPage';
-import PageTransition from './components/PageTransition';
+import AddOnListPage from './pages/AddOnListPage';
+import AddOnCreatePage from './pages/AddOnCreatePage';
+import AddOnGroupPage from './pages/AddOnGroupPage';
+import AddOnGroupCreatePage from './pages/AddOnGroupCreatePage.tsx';
+import PlanListPage from './pages/PlanListPage';
+import AdminPageTransition from './components/AdminPageTransition.tsx';
 
-const Router: React.FC = () => {
+const PageLayout: React.FC = () => {
+  return (
+    <AdminPageTransition>
+      <Outlet />
+    </AdminPageTransition>
+  );
+};
+
+const Router = () => {
   return (
     <Routes>
-      <Route path="/" element={
-        <PageTransition>
-          <StartPage />
-        </PageTransition>
-      } />
-      <Route path="/login" element={
-        <PageTransition>
-          <LoginPage />
-        </PageTransition>
-      } />
-      <Route path="/home" element={
-        <PageTransition>
-          <HomePage />
-        </PageTransition>
-      } />
-      <Route path="/admin" element={
-        <PageTransition>
-          <AdminPage />
-        </PageTransition>
-      } />
+      <Route element={<PageLayout />}>
+        <Route path="/" element={<StartPage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/home" element={<HomePage />} />
+      </Route>
+      <Route path="/admin" element={<AdminPage />} />
+      <Route path="/admin/services" element={<AddOnListPage />} />
+      <Route path="/admin/services/create" element={<AddOnCreatePage />} />
+      <Route path="/admin/groups" element={<AddOnGroupPage />} />
+      <Route path="/admin/groups/create" element={<AddOnGroupCreatePage />} />
+      <Route path="/admin/plans" element={<PlanListPage />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );

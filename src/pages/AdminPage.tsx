@@ -1,8 +1,8 @@
-import React from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import Button from '../components/Button';
 import Header from '../components/Header';
+import { useNavigate } from 'react-router-dom';
 
 const AdminPageContainer = styled(motion.div)`
   display: flex;
@@ -11,6 +11,7 @@ const AdminPageContainer = styled(motion.div)`
   justify-content: center;
   padding: 120px 24px;
   width: 100%;
+  min-height: 89vh;
   margin: 0;
   background: linear-gradient(135deg, rgba(255,255,255,0.8) 0%, rgba(255,241,248,0.4) 100%);
   position: relative;
@@ -130,7 +131,21 @@ const AdminButton = styled(Button)`
   }
 `;
 
-const AdminPage: React.FC = () => {
+const AdminPage = () => {
+  const navigate = useNavigate();
+
+  const handleAddOnServicesClick = () => {
+    navigate('/admin/services');
+  };
+
+  const handleAddOnGroupsClick = () => {
+    navigate('/admin/groups');
+  };
+
+  const handlePlansClick = () => {
+    navigate('/admin/plans');
+  };
+
   return (
     <>
       <Header />
@@ -164,8 +179,9 @@ const AdminPage: React.FC = () => {
           as={motion.button}
           whileHover={{ scale: 1.03 }}
           whileTap={{ scale: 0.98 }}
+          onClick={handleAddOnServicesClick}
         >
-          부가서비스 만들기
+          부가서비스 목록
         </AdminButton>
         <AdminButton 
           size="large" 
@@ -173,8 +189,9 @@ const AdminPage: React.FC = () => {
           as={motion.button}
           whileHover={{ scale: 1.03 }}
           whileTap={{ scale: 0.98 }}
+          onClick={handleAddOnGroupsClick}
         >
-          부가서비스 그룹 만들기
+          부가서비스 그룹 목록
         </AdminButton>
         <AdminButton 
           size="large" 
@@ -182,11 +199,12 @@ const AdminPage: React.FC = () => {
           as={motion.button}
           whileHover={{ scale: 1.03 }}
           whileTap={{ scale: 0.98 }}
+          onClick={handlePlansClick}
         >
-          요금제 만들기
+          요금제 목록
         </AdminButton>
       </ButtonContainer>
-          </AdminPageContainer>
+      </AdminPageContainer>
     </>
   );
 };
