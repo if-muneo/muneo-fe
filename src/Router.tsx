@@ -8,14 +8,14 @@ import AddOnListPage from './pages/AddOnListPage';
 import AddOnCreatePage from './pages/AddOnCreatePage';
 import AddOnGroupPage from './pages/AddOnGroupPage';
 import AddOnGroupCreatePage from './pages/AddOnGroupCreatePage.tsx';
-import PlanListPage from './pages/PlanListPage';
-import AdminPageTransition from './components/AdminPageTransition.tsx';
+// import PlanListPage from './pages/PlanListPage';
+import PageTransition from './components/PageTransition.tsx';
 
 const PageLayout: React.FC = () => {
   return (
-    <AdminPageTransition>
+    <PageTransition>
       <Outlet />
-    </AdminPageTransition>
+   </PageTransition>
   );
 };
 
@@ -32,7 +32,7 @@ const Router = () => {
       <Route path="/admin/services/create" element={<AddOnCreatePage />} />
       <Route path="/admin/groups" element={<AddOnGroupPage />} />
       <Route path="/admin/groups/create" element={<AddOnGroupCreatePage />} />
-      <Route path="/admin/plans" element={<PlanListPage />} />
+      {/*<Route path="/admin/plans" element={<PlanListPage />} />*/}
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
