@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import Header from '../components/Header';
-import api from '../util/axios';
+// import api from '../util/axios';
 
 const PageContainer = styled(motion.div)`
     width: 100%;
@@ -59,22 +59,22 @@ interface UserInfo {
 
 const MyPage: React.FC = () => {
     // const [user, setUser] = useState<UserInfo | null>(null);
-    const [loading, setLoading] = useState(true);
+    //const [loading, setLoading] = useState(true);
 
     // ✅ 사용자 정보 요청
     useEffect(() => {
-        api.get('/v1/users/me') // ← 백엔드 API 주소에 맞게 수정
-            .then((res) => {
-                // setUser(res.data);
-            })
-            .catch((err) => {
-                console.error('사용자 정보 불러오기 실패:', err);
-            })
-            .finally(() => {
-                setLoading(false);
-            });
+        // api.get('/v1/users/me') // ← 백엔드 API 주소에 맞게 수정
+        //     .then((res) => {
+        //         // setUser(res.data);
+        //     })
+        //     .catch((err) => {
+        //         console.error('사용자 정보 불러오기 실패:', err);
+        //     })
+        //     .finally(() => {
+        //         // setLoading(false);
+        //     });
     }, []);
-    const user = {
+    const user: UserInfo = {
         name: 'test',
         plan: 'test',
         phone: 'test',

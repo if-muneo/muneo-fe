@@ -4,7 +4,7 @@ import StartPage from './pages/StartPage';
 import LoginPage from './pages/LoginPage';
 import HomePage from './pages/HomePage';
 import AdminPage from './pages/AdminPage';
-import AddOnListPage from './pages/AddOnListPage';
+import AddOnListPage from './pages/AddonListPage.tsx';
 import AddOnCreatePage from './pages/AddOnCreatePage';
 import AddOnGroupPage from './pages/AddOnGroupPage';
 import AddOnGroupCreatePage from './pages/AddOnGroupCreatePage.tsx';

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import styled, { keyframes } from "styled-components";
+import styled from "styled-components";
 import SockJS from "sockjs-client";
 import Stomp from "stompjs";
 import Button from "../components/Button";
@@ -186,14 +186,15 @@ type ChatMessage = {
 };
 
 const ChatbotUI: React.FC = () => {
-  const name = localStorage.getItem("username");
-  const [username, setUsername] = useState(name + "");
+  const [username, setUsername] = useState("");
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const stompRef = useRef<Stomp.Client | null>(null);
   const chatBodyRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    const name = localStorage.getItem("username");
+    setUsername(name ?? "");
     chatBodyRef.current?.scrollTo(0, chatBodyRef.current.scrollHeight);
   }, [messages]);
 

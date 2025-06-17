@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import Header from '../components/Header';
 import api from '../util/axios';
-import type {Addon, Mplan} from "../types/MplanList.ts";
+import type {Mplan} from "../types/MplanList.ts";
 import Pagination from '../components/Pagination';
 import { useNavigate } from 'react-router-dom';
 
@@ -167,16 +167,11 @@ const MplanListPage: React.FC = () => {
                                             ) : (
                                                 <div>
                                                     <strong>{mplan.addonGroupResponse?.addonGroupName}</strong>
-                                                    <div style={{ marginTop: '8px' }}>
-                                                        {Array.isArray(mplan.addonGroupResponse?.addonGroupAddonsResponse)
-                                                            ? mplan.addonGroupResponse.addonGroupAddonsResponse
-                                                                .map((addon: Addon) => addon.name)
-                                                                .join(', ')
-                                                            : typeof mplan.addonGroupResponse?.addonGroupAddonsResponse === 'object' &&
-                                                            mplan.addonGroupResponse?.addonGroupAddonsResponse !== null
-                                                                ? (mplan.addonGroupResponse.addonGroupAddonsResponse as Addon).name
-                                                                : '부가서비스 없음'}
-                                                    </div>
+                                                    {/*<div style={{ marginTop: '8px' }}>*/}
+                                                    {/*    {mplan.addonGroupResponse?.addonGroupAddonsResponse?.addonGroupAddonsResponse*/}
+                                                    {/*        ?.map((addon: Addon) => addon.name)*/}
+                                                    {/*        .join(', ') ?? '부가서비스 없음'}*/}
+                                                    {/*</div>*/}
                                                 </div>
                                             )}
                                         </AddonItems>

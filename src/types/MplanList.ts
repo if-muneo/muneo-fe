@@ -8,7 +8,9 @@ export interface Addon {
 
 export interface AddonGroup {
     addonGroupName: string;
-    addonGroupAddonsResponse: Addon[];
+    addonGroupAddonsResponse: {
+        addonGroupAddonsResponse : Addon[];
+    };
 }
 
 export interface Mplan {

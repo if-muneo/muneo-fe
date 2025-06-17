@@ -6,7 +6,6 @@ import AdminListItem from '../components/AdminUI/AdminListItem';
 import CreateButton from '../components/AdminUI/CreateButton';
 import Pagination from '../components/AdminUI/Pagination';
 import api from "../util/axios.ts";
-import type {AddonCreateRequest} from "../models/AddOnModels.ts";
 
 const ServiceId = styled.span`
   font-size: 14px;
@@ -16,11 +15,30 @@ const ServiceId = styled.span`
   border-radius: 12px;
 `;
 
+type AddonType = 'MEDIA' | 'CALL' | 'SALE' | 'SAFE' | 'CONVENIENCE';
+
+export interface AddonCreateRequest {
+  id?: number; // Optional, 새로 생성 시에는 ID 불필요
+  name: string;
+  description: string;
+  price: number;
+  addonType: AddonType;
+}
+
 interface AddonGroupCreateRequest {
   id: number;
   addonGroupName: string;
   addonsCreateRequest: AddonCreateRequest[]; // 그룹에 포함할 부가서비스 목록
 }
+
+export interface AddonCreateRequest {
+  id?: number; // Optional, 새로 생성 시에는 ID 불필요
+  name: string;
+  description: string;
+  price: number;
+  addonType: AddonType;
+}
+
 
 const AddOnGroupPage = () => {
   const navigate = useNavigate();
