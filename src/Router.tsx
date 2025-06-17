@@ -4,14 +4,13 @@ import StartPage from './pages/StartPage';
 import LoginPage from './pages/LoginPage';
 import HomePage from './pages/HomePage';
 import AdminPage from './pages/AdminPage';
-import AddOnListPage from './pages/AddonListPage.tsx';
+import AddOnListPage from './pages/AddOnListPage'
 import AddOnCreatePage from './pages/AddOnCreatePage';
 import AddOnGroupPage from './pages/AddOnGroupPage';
 import AddOnGroupCreatePage from './pages/AddOnGroupCreatePage.tsx';
 // import PlanListPage from './pages/PlanListPage';
 import PageTransition from './components/PageTransition.tsx';
 import MplanListPage from "./pages/MplanListPage.tsx";
-import AddonListPage from "./pages/AddonListPage.tsx";
 import UserMplanDetailPage from "./pages/UserMplanDetailPage.tsx";
 import MyPage from "./pages/MyPage.tsx";
 
@@ -45,7 +44,7 @@ const Router = () => {
       } />
       <Route path="/addons" element={
           <PageTransition>
-              <AddonListPage />
+              <AddOnListPage />
           </PageTransition>
       } />
         <Route path="/mplan/:id" element={
