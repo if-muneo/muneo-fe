@@ -188,7 +188,9 @@ type ChatMessage = {
 };
 
 const ChatbotUI: React.FC = () => {
+
   const name = localStorage.getItem("username") || "";
+  const [isBotResponding, setIsBotResponding] = useState(false);
   const [username, setUsername] = useState(name);
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -218,25 +220,29 @@ const ChatbotUI: React.FC = () => {
 
         setMessages((prev) => {
           const existingIndex = prev.findIndex(m => m.streamId === payload.streamId);
+          let updated = [...prev];
+
           if (existingIndex !== -1) {
-            const updated = [...prev];
             updated[existingIndex] = {
               ...updated[existingIndex],
               content: updated[existingIndex].content + payload.content,
               loading: !payload.done
             };
-            return updated;
-          }
 
-          return [
-            ...prev,
-            {
+            if(payload.done) {
+              setIsBotResponding(false);
+            }
+
+          } else {
+            updated.push({
               sender: "bot",
               content: payload.content,
               streamId: payload.streamId,
               loading: !payload.done,
-            },
-          ];
+            });
+          }
+
+          return updated;
         });
       });
 
@@ -261,6 +267,8 @@ const ChatbotUI: React.FC = () => {
       streamId,
       loading: true
     };
+
+    setIsBotResponding(true);
 
     stompRef.current.send("/pub/chat/message", {}, JSON.stringify({
       sender: username,
@@ -310,8 +318,9 @@ const ChatbotUI: React.FC = () => {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyUp={(e) => e.key === "Enter" && send()}
+          disabled={isBotResponding}
         />
-        <SendButton onClick={send}>➤</SendButton>
+        <SendButton as="button" disabled={isBotResponding} onClick={send}>➤</SendButton>
       </InputBar>
     </ChatWrapper>
   );
