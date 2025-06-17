@@ -212,7 +212,7 @@ const ChatbotUI: React.FC = () => {
       },
     ]);
 
-    const socket = new SockJS(`http://localhost:8080/ws?username=${encodeURIComponent(username)}`);
+    const socket = new SockJS(`${import.meta.env.VITE_BASE_URL}/ws?username=${encodeURIComponent(username)}`);
     const client = Stomp.over(socket);
 
     client.connect({}, () => {
