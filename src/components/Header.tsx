@@ -56,7 +56,7 @@ const NavItem = styled(motion.div)`
 
 const Header: React.FC = () => {
     const location = useLocation();
-    const isAdminPage = location.pathname === '/admin';
+    const isAdminPage = location.pathname.startsWith('/admin');
 
     return (
         <HeaderContainer>
