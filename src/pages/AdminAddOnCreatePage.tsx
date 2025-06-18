@@ -144,7 +144,7 @@ const ButtonGroup = styled.div`
 
 type AddonType = 'MEDIA' | 'CALL' | 'SALE' | 'SAFE' | 'CONVENIENCE';
 
-const AddOnCreatePage = () => {
+const AdminAddOnCreatePage = () => {
   const navigate = useNavigate();
   
   // type 초기값은 우선 빈 문자열로 설정하고 선택하면 AddonType으로 변경
@@ -318,4 +318,4 @@ const AddOnCreatePage = () => {
   );
 };
 
-export default AddOnCreatePage;
+export default AdminAddOnCreatePage;
