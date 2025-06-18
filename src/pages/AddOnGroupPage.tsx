@@ -43,8 +43,8 @@ export interface AddonCreateRequest {
 const AddOnGroupPage = () => {
   const navigate = useNavigate();
   const [groups, setGroups] = useState<AddonGroupCreateRequest[]>([]);
-  const [totalPages, setTotalPages] = useState(1);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
+  const [currentPage, setCurrentPage] = useState(0);
 
   useEffect(() => {
     const fetchGroups = async () => {

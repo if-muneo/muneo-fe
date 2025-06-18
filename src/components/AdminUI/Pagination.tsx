@@ -55,10 +55,9 @@ const Pagination: React.FC<PaginationProps> = ({ currentPage, totalPages, onPage
     const pagesToRender: (number | 'ellipsis')[] = [];
 
     const pageGroupSize = 5;
-    const safeCurrentPage = Math.max(currentPage, 1); // 🔥 최소 1 보장
-    const currentGroup = Math.floor((safeCurrentPage - 1) / pageGroupSize);
-    const startPage = currentGroup * pageGroupSize + 1;
-    const endPage = Math.min(startPage + pageGroupSize - 1, totalPages);
+    const currentGroup = Math.floor(currentPage / pageGroupSize);
+    const startPage = currentGroup * pageGroupSize;
+    const endPage = Math.min(startPage + pageGroupSize - 1, totalPages-1);
 
     // 현재 그룹 페이지 추가
     for (let i = startPage; i <= endPage; i++) {
@@ -75,7 +74,7 @@ const Pagination: React.FC<PaginationProps> = ({ currentPage, totalPages, onPage
         <PaginationContainer>
             <PaginationButton
                 onClick={() => onPageChange(currentPage - 1)}
-                disabled={currentPage === 1}
+                disabled={currentPage === 0}
             >
                 &lt;
             </PaginationButton>
@@ -89,7 +88,7 @@ const Pagination: React.FC<PaginationProps> = ({ currentPage, totalPages, onPage
                         $isActive={page === currentPage}
                         onClick={() => onPageChange(Number(page))}
                     >
-                        {page}
+                        {page + 1}
                     </PaginationButton>
                 )
             )}
