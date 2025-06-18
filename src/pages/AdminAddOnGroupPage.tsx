@@ -40,7 +40,7 @@ export interface AddonCreateRequest {
 }
 
 
-const AddOnGroupPage = () => {
+const AdminAddOnGroupPage = () => {
   const navigate = useNavigate();
   const [groups, setGroups] = useState<AddonGroupCreateRequest[]>([]);
   const [totalPages, setTotalPages] = useState(0);
@@ -99,4 +99,4 @@ const AddOnGroupPage = () => {
   );
 };
 
-export default AddOnGroupPage;
+export default AdminAddOnGroupPage;

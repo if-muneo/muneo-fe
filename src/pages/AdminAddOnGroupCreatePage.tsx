@@ -212,7 +212,7 @@ interface AddonResponse {
   addonType: AddonType;
 }
 
-const AddOnGroupCreatePage = () => {
+const AdminAddOnGroupCreatePage = () => {
   const navigate = useNavigate();
   
   const [groupName, setGroupName] = useState('');
@@ -414,4 +414,4 @@ const AddOnGroupCreatePage = () => {
   );
 };
 
-export default AddOnGroupCreatePage;
+export default AdminAddOnGroupCreatePage;

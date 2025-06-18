@@ -36,8 +36,8 @@ interface AddonResponse {
 const AdditionalServiceListPage = () => {
   const navigate = useNavigate();
   const [services, setServices] = useState<AddonResponse[]>([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
 
   useEffect(() => {
     const fetchServices = async () => {
