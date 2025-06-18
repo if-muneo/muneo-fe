@@ -4,8 +4,8 @@ import StartPage from './pages/StartPage';
 import LoginPage from './pages/LoginPage';
 import HomePage from './pages/HomePage';
 import AdminPage from './pages/AdminPage';
-import AdminAddOnListPage from './pages/AdminAddOnListPage.tsx'
-import AddOnListPage from './pages/AddOnListPage.tsx'
+import AdminAddOnListPage from './pages/AdminAddOnListPage.tsx';
+import AddonListPage from './pages/AddonListPage.tsx';
 import AdminAddOnCreatePage from './pages/AdminAddOnCreatePage.tsx';
 import AdminAddOnGroupPage from './pages/AdminAddOnGroupPage.tsx';
 import AdminAddOnGroupCreatePage from './pages/AdminAddOnGroupCreatePage.tsx';
@@ -32,7 +32,7 @@ const Router = () => {
         <Route path="/home" element={<HomePage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
           <Route path="/plans" element={<MplanListPage />} />
-          <Route path="/addons" element={<AddOnListPage />} />
+          <Route path="/addons" element={<AddonListPage />} />
           <Route path="/mplan/:id" element={<UserMplanDetailPage />} />
           <Route path="/mypage" element={<MyPage />} />
           <Route path="/admin" element={<AdminPage />} />
