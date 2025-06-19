@@ -196,6 +196,7 @@ const ChatbotUI: React.FC = () => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const stompRef = useRef<Stomp.Client | null>(null);
   const chatBodyRef = useRef<HTMLDivElement>(null);
+  const pongIgnoreUntilRef = useRef<number>(0);
 
   useEffect(() => {
     const name = localStorage.getItem("username") || "";
@@ -214,6 +215,26 @@ const ChatbotUI: React.FC = () => {
 
     const socket = new SockJS(`${import.meta.env.VITE_BASE_URL}/ws?username=${encodeURIComponent(username)}`);
     const client = Stomp.over(socket);
+    pongIgnoreUntilRef.current = Date.now() + 3000; // 3초간 PONG 무시
+
+    client.debug = (str) => {
+      console.log("[STOMP DEBUG]", str);
+
+      if (str.includes("PONG")) {
+        const now = Date.now();
+        if (now < pongIgnoreUntilRef.current) {
+          console.warn("💓 PONG 무시 (초기 연결 직후)");
+          return; // 초기 PONG은 무시
+        }
+
+        console.warn("💓 서버 PONG 수신됨 → 연결 끊기");
+        client.disconnect(() => {
+          console.log("🔌 수동 disconnect 완료");
+          stompRef.current = null;
+        });
+      }
+    };
+
 
     client.connect({}, () => {
       client.subscribe("/user/queue/public", (msg) => {
@@ -231,7 +252,7 @@ const ChatbotUI: React.FC = () => {
               loading: !payload.done
             };
 
-            if(payload.done) {
+            if (payload.done) {
               setIsBotResponding(false);
             }
 
@@ -254,12 +275,90 @@ const ChatbotUI: React.FC = () => {
     return () => {
       if (client.connected) client.disconnect(() => {
         console.log("disconnect");
+        stompRef.current = null;
       });
     };
   }, []);
 
-  const send = () => {
-    if (!input.trim() || !stompRef.current?.connected) return;
+  const reconnectIfNeeded = async () => {
+    console.log("🙇🏽‍♂️ 연결 재시도");
+    if (!stompRef.current || !stompRef.current.connected) {
+      return new Promise<void>((resolve, reject) => {
+
+        const socket = new SockJS(`${import.meta.env.VITE_BASE_URL}/ws?username=${encodeURIComponent(username)}`);
+        const client = Stomp.over(socket);
+
+        client.connect({}, () => {
+          pongIgnoreUntilRef.current = Date.now() + 3000; // << 이거 반드시 추가!
+          stompRef.current = client;
+          client.subscribe("/user/queue/public", (msg) => {
+            // 메시지 수신 처리 (생략 가능 — 이미 useEffect 안에서 동일 처리 중)
+            const payload: ChatMessage = JSON.parse(msg.body);
+            if (!payload.streamId) return;
+
+            setMessages((prev) => {
+              const existingIndex = prev.findIndex(m => m.streamId === payload.streamId);
+              const updated = [...prev];
+
+              if (existingIndex !== -1) {
+                updated[existingIndex] = {
+                  ...updated[existingIndex],
+                  content: updated[existingIndex].content + payload.content,
+                  loading: !payload.done
+                };
+
+                if (payload.done) {
+                  setIsBotResponding(false);
+                }
+              } else {
+                updated.push({
+                  sender: "bot",
+                  content: payload.content,
+                  streamId: payload.streamId,
+                  loading: !payload.done,
+                });
+              }
+
+              return updated;
+            });
+          });
+
+          stompRef.current = client;
+          resolve();
+
+          client.debug = (str) => {
+            console.log("[STOMP DEBUG]", str);
+
+            if (str.includes("PONG")) {
+              const now = Date.now();
+              if (now < pongIgnoreUntilRef.current) {
+                console.warn("💓 PONG 무시 (초기 연결 직후)");
+                return; // 초기 PONG은 무시
+              }
+
+              console.warn("💓 서버 PONG 수신됨 → 연결 끊기");
+              client.disconnect(() => {
+                console.log("🔌 수동 disconnect 완료");
+                stompRef.current = null;
+              });
+            }
+          };
+
+        }, reject);
+      });
+    }
+  };
+
+  const send = async () => {
+    if (!input.trim()) return;
+
+    await reconnectIfNeeded();
+
+    if (!stompRef.current?.connected) {
+      alert("서버와 연결되어 있지 않습니다. 잠시 후 다시 시도해주세요.");
+      return;
+    }
+
     const streamId = crypto.randomUUID();
 
     const userMsg: ChatMessage = { sender: username, content: input };
