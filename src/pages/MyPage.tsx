@@ -1,8 +1,9 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import Header from '../components/Header';
-// import api from '../util/axios';
+import api from '../util/axios';
+import type { UserInfo } from '../types/UserInfo';
 
 const PageContainer = styled(motion.div)`
     width: 100%;
@@ -48,40 +49,23 @@ const Field = styled.div`
     }
 `;
 
-interface UserInfo {
-    name: string;
-    plan: string;
-    phone: string;
-    signUpDate: string;
-    services: string[];
-    dataRemaining: string;
-}
-
 const MyPage: React.FC = () => {
-    // const [user, setUser] = useState<UserInfo | null>(null);
-    //const [loading, setLoading] = useState(true);
+    const [user, setUser] = useState<UserInfo | null>(null);
 
-    // ✅ 사용자 정보 요청
     useEffect(() => {
-        // api.get('/v1/users/me') // ← 백엔드 API 주소에 맞게 수정
-        //     .then((res) => {
-        //         // setUser(res.data);
-        //     })
-        //     .catch((err) => {
-        //         console.error('사용자 정보 불러오기 실패:', err);
-        //     })
-        //     .finally(() => {
-        //         // setLoading(false);
-        //     });
+        api.get('/v1/mypage')
+            .then(res => {
+                // axios 기본 응답 구조: { statusCode, message, data }
+                setUser(res.data.data);
+            })
+            .catch(err => {
+                console.error('사용자 정보 불러오기 실패:', err);
+            });
     }, []);
-    const user: UserInfo = {
-        name: 'test',
-        plan: 'test',
-        phone: 'test',
-        signUpDate: 'test',
-        services: ['test', 'test', 'test', 'test'],
-        dataRemaining: 'test',
-    };
+
+    if (!user) {
+        return <div>로딩 중…</div>;
+    }
 
     return (
         <PageContainer
@@ -89,21 +73,19 @@ const MyPage: React.FC = () => {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
         >
-            {/* 상단 고정 헤더 */}
             <Header />
 
-            {/* 사용자 정보 섹션: 위/아래, 좌/우 모두 가운데 정렬 */}
             <ContentContainer
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.2, duration: 0.5 }}
             >
-                {/* MY PAGE 제목 */}
                 <h1 style={{
                     textAlign: 'center',
                     marginBottom: '24px',
                     color: '#FF007C',
                 }}>MY PAGE</h1>
+
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -111,14 +93,23 @@ const MyPage: React.FC = () => {
                 >
                     <InfoCard>
                         <Field><span className="label">이름:</span>{user.name}</Field>
-                        <Field><span className="label">가입된 요금제:</span>{user.plan}</Field>
-                        <Field><span className="label">핸드폰 번호:</span>{user.phone}</Field>
-                        <Field><span className="label">가입 날짜:</span>{user.signUpDate}</Field>
+                        <Field><span className="label">나이:</span>{user.old}</Field>
                         <Field>
-                            <span className="label">사용 중인 부가서비스:</span>
-                            {user.services.join(', ')}
+                            <span className="label">가입 상품:</span>
+                            {user.subscriptionsResponse.subscriptionsResponse.length > 0
+                                ? user.subscriptionsResponse.subscriptionsResponse
+                                    .map(sub => `${sub.mplanResponse.name} - ${sub.fee.toLocaleString()}원`)
+                                    .join(', ')
+                                : '가입된 상품이 없습니다!'}
                         </Field>
-                        <Field><span className="label">남은 데이터량:</span>{user.dataRemaining}GB</Field>
+                        <Field><span className="label">이번달 데이터 사용량:</span>{user.useAmount/1000}GB</Field>
+                        <Field><span className="label">핸드폰 번호:</span>{user.phoneNumber}</Field>
+                        <Field><span className="label">이메일:</span>{user.email}</Field>
+                        <Field>
+                            <span className="label">가입 날짜:</span>
+                            {new Date(user.createdAt).toLocaleDateString('ko-KR')}
+                        </Field>
+
                     </InfoCard>
                 </motion.div>
             </ContentContainer>
