@@ -1,5 +1,6 @@
 import {useEffect, useState} from 'react';
 import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
 import AdminListLayout from '../components/AdminUI/AdminListLayout';
 import AdminListItem from '../components/AdminUI/AdminListItem';
 import CreateButton from '../components/AdminUI/CreateButton';
@@ -49,7 +50,8 @@ const formatPrice = (price: number) => {
 };
 
 
-const PlanListPage = () => {
+const AdminPlanListPage = () => {
+  const navigate = useNavigate();
   const [mPlans, setMPlans] = useState<Mplan[]>([]);
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
@@ -72,7 +74,9 @@ const PlanListPage = () => {
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
   
   const createaMPlanButton = (
-    <CreateButton label="요금제 만들기" />
+    <CreateButton label="요금제 만들기"
+                  onClick={() => navigate('/admin/plans/create')}
+    />
   );
   
   return (
@@ -103,4 +107,4 @@ const PlanListPage = () => {
   );
 };
 
-export default PlanListPage;
+export default AdminPlanListPage;

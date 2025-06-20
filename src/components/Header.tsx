@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useLocation } from 'react-router-dom';
+import headerLogo from '../assets/logos/logo-header.png';
 
 const HeaderContainer = styled.header`
     display: flex;
@@ -61,7 +62,7 @@ const Header: React.FC = () => {
     return (
         <HeaderContainer>
             <Logo to="/home">
-                <img src="/src/assets/logos/logo-header.png" alt="IFMUNEO Logo" />
+                <img src={headerLogo} alt="IFMUNEO Logo" />
                 <span>IFMUNEO</span>
             </Logo>
             <Navigation>
