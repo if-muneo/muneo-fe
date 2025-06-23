@@ -100,7 +100,6 @@ const MplanListPage: React.FC = () => {
 
     useEffect(() => {
         setLoading(true);
-        // api.get(`/v1/mplan`)
         api.get(`/v1/mplan?page=${currentPage}`)
             .then((res) => {
                 const response = res.data.data.mplansResponse;
@@ -149,10 +148,12 @@ const MplanListPage: React.FC = () => {
                                         <PlanName>{mplan.name}</PlanName>
                                         <PlanDetail>
                                             <div>월정액: {mplan.monthlyPrice.toLocaleString()}원</div>
-                                            <div>기본 데이터량: {(mplan.basicDataAmount / 1000).toLocaleString()}GB</div>
-                                            {/*<div>쉐어링: {mplan.sharingData.toLocaleString()}GB</div>*/}
-                                            {/*<div>문자: {mplan.textMessage ? '무제한' : '기본제공'}</div>*/}
-                                            {/*<div>전화: {mplan.voiceCallVolume.toLocaleString()}</div>*/}
+                                            <div>
+                                                기본 데이터량:{' '}
+                                                {mplan.basicDataAmount > 10000
+                                                    ? '무제한'
+                                                    : `${(mplan.basicDataAmount / 1000).toLocaleString()}GB`}
+                                            </div>
                                         </PlanDetail>
                                     </div>
                                 </SectionBox>

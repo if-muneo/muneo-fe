@@ -108,7 +108,12 @@ const UserMplanDetailPage: React.FC = () => {
                 >
                     <PlanDetail>
                         <div>월정액: {mplan.monthlyPrice?.toLocaleString() ?? 0}원</div>
-                        <div>기본 데이터량: {(mplan.basicDataAmount ? mplan.basicDataAmount / 1000 : 0).toLocaleString()}GB</div>
+                        <div>
+                            기본 데이터량:{' '}
+                            {mplan.basicDataAmount && mplan.basicDataAmount > 10000
+                                ? '무제한'
+                                : `${(mplan.basicDataAmount ? mplan.basicDataAmount / 1000 : 0).toLocaleString()}GB`}
+                        </div>
                         <div>쉐어링: {(mplan.sharingData ? mplan.sharingData / 1000 : 0).toLocaleString()}GB</div>
                         <div>문자: {mplan.textMessage ? '무제한' : '기본제공'}</div>
                         <div>전화: {mplan.voiceCallVolume?.toLocaleString() ?? 0}</div>
