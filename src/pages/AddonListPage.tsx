@@ -122,7 +122,7 @@ const AddonListPage: React.FC = () => {
                                     <div>
                                         <AddonName>{addon.name}</AddonName>
                                         <AddonDetail>
-                                            <div>가격: {addon.price}</div>
+                                            <div>가격: {(addon.price).toLocaleString()}원</div>
                                             <div>서비스 설명: {addon.description}</div>
                                         </AddonDetail>
                                     </div>
