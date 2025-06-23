@@ -58,6 +58,7 @@ const NavItem = styled(motion.div)`
 const Header: React.FC = () => {
     const location = useLocation();
     const isAdminPage = location.pathname.startsWith('/admin');
+    const role = localStorage.getItem("role");
 
     return (
         <HeaderContainer>
@@ -92,9 +93,12 @@ const Header: React.FC = () => {
                             <NavItem whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                                 <Link to="/mypage">MYPAGE</Link>
                             </NavItem>
-                            <NavItem whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                                <Link to="/admin">ADMIN</Link>
-                            </NavItem>
+
+                            {role === "ADMIN" && (
+                                <NavItem whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                                    <Link to="/admin">ADMIN</Link>
+                                </NavItem>
+                            )}
                         </motion.div>
                     )}
                 </AnimatePresence>

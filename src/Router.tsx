@@ -15,6 +15,7 @@ import MplanListPage from "./pages/MplanListPage.tsx";
 import UserMplanDetailPage from "./pages/UserMplanDetailPage.tsx";
 import MyPage from "./pages/MyPage.tsx";
 import AdminPlanListPage from "./pages/AdminPlanListPage.tsx";
+import RequireAdmin from './components/RequireAdmin';
 
 const PageLayout: React.FC = () => {
   return (
@@ -30,20 +31,20 @@ const Router = () => {
       <Route element={<PageLayout />}>
         <Route path="/" element={<StartPage />} />
         <Route path="/login" element={<LoginPage />} />
-          <Route path="*" element={<Navigate to="/" replace />} />
-          <Route path="/plans" element={<MplanListPage />} />
-          <Route path="/addons" element={<AddonListPage />} />
-          <Route path="/mplan/:id" element={<UserMplanDetailPage />} />
-          <Route path="/mypage" element={<MyPage />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path="/plans" element={<MplanListPage />} />
+        <Route path="/addons" element={<AddonListPage />} />
+        <Route path="/mplan/:id" element={<UserMplanDetailPage />} />
+        <Route path="/mypage" element={<MyPage />} />
       </Route>
         <Route path="/home" element={<HomePage />} />
-        <Route path="/admin" element={<AdminPage />} />
-        <Route path="/admin/services" element={<AdminAddOnListPage />} />
-        <Route path="/admin/services/create" element={<AdminAddOnCreatePage />} />
-        <Route path="/admin/groups" element={<AdminAddOnGroupPage />} />
-        <Route path="/admin/groups/create" element={<AdminAddOnGroupCreatePage />} />
-        <Route path="/admin/plans/create" element={<AdminMplanCreatePage />} />
-        <Route path="/admin/plans" element={<AdminPlanListPage />} />
+        <Route path="/admin" element={<RequireAdmin><AdminPage /></RequireAdmin>} />
+        <Route path="/admin/services" element={<RequireAdmin><AdminAddOnListPage /></RequireAdmin>} />
+        <Route path="/admin/services/create" element={<RequireAdmin><AdminAddOnCreatePage /></RequireAdmin>} />
+        <Route path="/admin/groups" element={<RequireAdmin><AdminAddOnGroupPage /></RequireAdmin>} />
+        <Route path="/admin/groups/create" element={<RequireAdmin><AdminAddOnGroupCreatePage /></RequireAdmin>} />
+        <Route path="/admin/plans/create" element={<RequireAdmin><AdminMplanCreatePage /></RequireAdmin>} />
+        <Route path="/admin/plans" element={<RequireAdmin><AdminPlanListPage /></RequireAdmin>} />
     </Routes>
   );
 };
