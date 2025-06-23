@@ -114,6 +114,11 @@ const ReviewBox: React.FC<ReviewBoxProps> = ({ mplanId }) => {
             setReviews(res.data.data.reviewsResponse);
         } catch (err) {
             console.error('리뷰 등록 실패:', err);
+            if (err.response?.data?.message) {
+                alert(`리뷰 등록 실패: ${err.response.data.message}`);
+            } else {
+                alert('리뷰 등록 중 오류가 발생했습니다.');
+            }
         }
     };
 
